@@ -12,12 +12,14 @@ class TimeKey
     self.new date.strftime('%Y-%m-%d %H:') + min_tail
   end
 
+  attr_reader :val
+
   def initialize stamp
     @val = stamp
   end
 
   def to_s
-    @val
+    val
   end
 
   def days_in_month year, month
@@ -29,14 +31,14 @@ class TimeKey
   MONTH = (0..12).inject([]) {|acc, item| acc << (item).to_s.rjust(2, '0')}
 
   def children
-    if @val.size == 13
-      MIN.inject([]) {|acc, item| acc << self.class.new(@val + ':' + item)}
-    elsif  @val.size == 10
-      HOUR.inject([]) {|acc, item| acc << self.class.new(@val + ' ' + item)}.flatten
-    elsif  @val.size == 7
-      (year, month) = @val.split /\-/, 2
+    if val.size == 13
+      MIN.inject([]) {|acc, item| acc << self.class.new(val + ':' + item)}
+    elsif  val.size == 10
+      HOUR.inject([]) {|acc, item| acc << self.class.new(val + ' ' + item)}.flatten
+    elsif  val.size == 7
+      (year, month) = val.split /\-/, 2
       (1..(days_in_month year.to_i, month.to_i)).inject([]) do |acc, item|
-        acc << self.class.new(@val + '-' + item.to_s.rjust(2, '0'))
+        acc << self.class.new(val + '-' + item.to_s.rjust(2, '0'))
       end
     else
       []
@@ -45,10 +47,10 @@ class TimeKey
 
   def parents
     tor = []
-    tor << self.class.new(@val[0,13]) if @val.size > 13
-    tor << self.class.new(@val[0,10]) if @val.size > 10
-    tor << self.class.new(@val[0,7]) if @val.size > 7
-    tor << self.class.new(@val[0,4]) if @val.size > 4
+    tor << self.class.new(val[0,13]) if val.size > 13
+    tor << self.class.new(val[0,10]) if val.size > 10
+    tor << self.class.new(val[0,7]) if val.size > 7
+    tor << self.class.new(val[0,4]) if val.size > 4
     tor
   end
 end

@@ -4,21 +4,15 @@ require 'yajl'
 module EventChopper
 
 class TTStore
+  include EventChopper
+
   def initialize name, host = 'localhost', port = 1978
     @prefix = name
     @db = TokyoTyrant::RDB::new
     @db.open host, port
   end
 
-  def encode data
-    Yajl::Encoder.encode data
-  end
-
-  def decode data
-    Yajl::Parser.parse data
-  end
-
-  def pkey key, id = NOID
+ def pkey key, id = NOID
     @prefix + ' ' + key.to_s + '|' + id.to_s
   end
 

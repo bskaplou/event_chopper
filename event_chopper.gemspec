@@ -24,5 +24,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "comm"
   s.add_runtime_dependency "bunny"
   s.add_runtime_dependency "yajl-ruby"
+  s.add_runtime_dependency "mongo"
   # s.add_runtime_dependency "rest-client"
 end

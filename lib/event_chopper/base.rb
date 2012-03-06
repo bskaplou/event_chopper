@@ -22,8 +22,8 @@ class Base
     puts stamp.to_s + ' -> ' + id + ' -> ' + current_value.to_s
   end
 
-  def map topic, record
-    emit record
+  def map topic, record, stamp = nil
+    emit record, NOID, stamp
   end
 
   def get stamp, id = NOID
