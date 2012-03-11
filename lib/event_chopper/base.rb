@@ -6,11 +6,13 @@ module EventChopper
 NOID = ''
 
 class Base
+  include EventChopper
+
   def initialize name = self.class.name
-    @store = EliminatingStore.new TTStore.new(name)
+    @store = store name
   end
 
-  def emit record, id = NOID, stamp = nil 
+  def emit record, stamp = nil, id = NOID
     stamp = TimeKey.now if stamp.nil?
     current_value = get stamp, id
     if current_value.nil?
@@ -19,11 +21,10 @@ class Base
       current_value = reduce [current_value, record]
     end
     @store.put stamp, current_value, id
-    puts stamp.to_s + ' -> ' + id + ' -> ' + current_value.to_s
   end
 
   def map topic, record, stamp = nil
-    emit record, NOID, stamp
+    emit record, stamp, NOID
   end
 
   def get stamp, id = NOID
@@ -44,7 +45,7 @@ class Base
 
   def run
     Comm::Consumer.new(event_types).subscribe do |topic, message|
-      map topic, message
+      map topic, message, TimeKey.now
     end
   end
 end

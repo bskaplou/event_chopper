@@ -7,7 +7,7 @@ class GateDistribution < Base
 
   def map topic, message, stamp
     message.keys.each do |key|
-      emit message[key], key, stamp
+      emit message[key], stamp, key
     end
   end
 

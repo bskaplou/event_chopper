@@ -5,8 +5,5 @@ require 'event_chopper'
 
 reporter = Object.const_get('EventChopper').const_get(ARGV[0]).new
 EventChopper.logger.replay(Time.at(ARGV[1].to_i), Time.at(ARGV[2].to_i), reporter.event_types) do |type, message, stamp|
-  # puts type
- #  puts message
-#   puts stamp
   reporter.map type, message, stamp 
 end
