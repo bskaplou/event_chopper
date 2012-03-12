@@ -6,6 +6,7 @@ module EventChopper
 class Server < Sinatra::Base
   include EventChopper
 
+  set :port, 5000
   set :static, true
   set :public_folder, File.dirname(__FILE__) + '/server'
 
