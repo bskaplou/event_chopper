@@ -7,7 +7,7 @@ Start date: <input type='text' name='start' id='start' value=''><br>
 Stop date: <input type='text' name='stop' id='stop' value=''><br>
 Group by: <select name='group' id='group'>
 <option value='minute'>10 Minutes</option>
-<option value='hour'>Hour</option>
+<option value='hour' selected="selected">Hour</option>
 <option value='day'>Day</option>
 <option value='month'>Month</option>
 <option value='year'>Year</option>
@@ -17,11 +17,10 @@ Group by: <select name='group' id='group'>
 <div id="container" style="width: 100%; height: 100%"></div>
 <script>
 $(document).ready(function() {
-  var cur = Date.today();
-  var last = Date.today().add(-5).days();
-  last.setTime(last.getTime() - 5 * 24 * 60 * 60 * 1000);
-  $('#start').val(cur.toString('yyyy-MM-dd hh:00'));
-  $('#stop').val(last.toString('yyyy-MM-dd hh:00'));
+  var cur = Date.today().add(1).days();
+  var last = Date.today().add(-1).days();
+  $('#start').val(last.toString('yyyy-MM-dd hh:00'));
+  $('#stop').val(cur.toString('yyyy-MM-dd hh:00'));
 });
 
 function onsub() {
