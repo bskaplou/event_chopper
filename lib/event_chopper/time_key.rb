@@ -7,14 +7,16 @@ class TimeKey
     self.from_date DateTime.now
   end
 
-  def self.from_date date
+  def self.from_date date, size = :minute
     min_tail = (date.min - date.min % 10).to_s.rjust(2, '0')
-    self.new date.strftime('%Y-%m-%d %H:') + min_tail
+    r = self.new date.strftime('%Y-%m-%d %H:') + min_tail
+    size == :minute ? r : r.parents[STEPS_DEPTH.index(size)]
   end
 
-  def self.from_string str
+  def self.from_string str, size = :minute
     #some validation here
-    self.new str
+    r = self.new str
+    size == :minute ? r : r.parents[STEPS_DEPTH.index(size)]
   end
 
   attr_reader :val

@@ -17,12 +17,12 @@ class Server < Sinatra::Base
     @reporter ||= Object.const_get('EventChopper').const_get(reporter_name).new
   end
 
-  def timekey param
-    TimeKey.from_string param
+  def timekey param, size = :minute
+    TimeKey.from_string param, size
   end
 
   def from
-    timekey params[:from]
+    timekey params[:from], params[:period].to_sym
   end
 
   def to
