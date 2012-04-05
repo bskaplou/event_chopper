@@ -1,6 +1,7 @@
 source "http://rubygems.org"
 
-gem 'comm'
+gem 'waffle'
+gem 'waffle'
 gem 'tokyotyrant'
 gem 'mongo'
 gem 'bson_ext'

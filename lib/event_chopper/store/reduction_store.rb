@@ -9,10 +9,7 @@ class ReductionStore
   end
 
   def flush
-    if ! @key.nil?
-      puts 'storing key ' + @key.to_s
-      @store.put @key, @value, @id
-    end
+    @store.put @key, @value, @id unless @key.nil?
   end
 
   def put key, value, id = NOID
@@ -25,7 +22,7 @@ class ReductionStore
   end
 
   def get key, id = NOID
-    if key == @key.to_s and id.to_s == @id.to_s
+    if key.to_s == @key.to_s and id.to_s == @id.to_s
       @value
     else
       @store.get key, id
@@ -34,6 +31,8 @@ class ReductionStore
 
   def del key, id = NOID
     flush
+    @key = nil
+    @id = nil
     @store.del key, id
   end
 end

@@ -1,0 +1,3 @@
+transport: rabbitmq
+encoder: json
+url: 'amqp://nano:nano@78.108.183.225:5672/nano'

@@ -1,4 +1,4 @@
-require 'comm'
+require 'waffle'
 require 'bunny'
 
 module EventChopper
@@ -43,11 +43,19 @@ class Base
     tor
   end
 
-  def run
-    Comm::Consumer.new(event_types).subscribe do |topic, message|
-      map topic, message, TimeKey.now
-    end
-  end
-end
+#  def run
+#    Comm::Consumer.new(event_types).subscribe do |topic, message|
+#      map topic, message, TimeKey.now
+#    end
+#  end
 
+  def run
+      transport = Waffle::Base.new eval("Waffle::Transports::#{Waffle::Config.transport.capitalize}").new
+
+      transport.subscribe event_types do |topic, event|
+        map topic, event, TimeKey.now
+      end
+  end
+
+end
 end

@@ -15,7 +15,7 @@ class Server < Sinatra::Base
   end
 
   def reporter
-    @reporter ||= Object.const_get('EventChopper').const_get(reporter_name).new
+    Object.const_get('EventChopper').const_get(reporter_name).new
   end
 
   def timekey param, size = :minute
