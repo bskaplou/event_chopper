@@ -8,6 +8,7 @@ require "event_chopper/server"
 #require "event_chopper/gate_slowness"
 #require "event_chopper/search_click_directions"
 require "event_chopper/reports/test"
+require "event_chopper/reports/scb"
 require "event_chopper/store/ttstore"
 require "event_chopper/store/riak_store"
 require "event_chopper/store/eleminating_store"
@@ -27,8 +28,9 @@ module EventChopper
   end
 
   def store name
-    ReductionStore.new(EliminatingStore.new TTStore.new(name))
-    #ReductionStore.new EliminatingStore.new RiakStore.new(name)
+    #ReductionStore.new(EliminatingStore.new TTStore.new(name))
+    #EliminatingStore.new TTStore.new(name)
+    ReductionStore.new EliminatingStore.new RiakStore.new(name)
     #EliminatingStore.new RiakStore.new(name)
   end
 

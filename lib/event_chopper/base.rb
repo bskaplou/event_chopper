@@ -27,6 +27,10 @@ class Base
     emit record, stamp, NOID
   end
 
+  def finalize record
+    record
+  end
+
   def get stamp, id = NOID
     tor = @store.get stamp, id
     if tor.nil?
@@ -43,11 +47,9 @@ class Base
     tor
   end
 
-#  def run
-#    Comm::Consumer.new(event_types).subscribe do |topic, message|
-#      map topic, message, TimeKey.now
-#    end
-#  end
+  def fetch stamp, id = NOID
+    finalize get(stamp, id)
+  end
 
   def run
       transport = Waffle::Base.new eval("Waffle::Transports::#{Waffle::Config.transport.capitalize}").new

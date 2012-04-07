@@ -20,9 +20,8 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
-#  s.add_runtime_dependency "tokyotyrant"
-  s.add_runtime_dependency "comm"
-  s.add_runtime_dependency "bunny"
+  s.add_runtime_dependency "tokyotyrant"
+  s.add_runtime_dependency "waffle"
   s.add_runtime_dependency "yajl-ruby"
   s.add_runtime_dependency "mongo"
   s.add_runtime_dependency "sinatra"

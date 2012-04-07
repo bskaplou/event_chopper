@@ -1,4 +1,3 @@
-require 'comm'
 require 'mongo'
 
 module EventChopper

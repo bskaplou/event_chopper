@@ -1,8 +1,9 @@
 source "http://rubygems.org"
 
-gem 'waffle'
+gem 'sinatra'
 gem 'waffle'
 gem 'tokyotyrant'
+gem 'riak'
 gem 'mongo'
 gem 'bson_ext'
 

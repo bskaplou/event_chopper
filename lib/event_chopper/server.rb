@@ -35,12 +35,12 @@ class Server < Sinatra::Base
   end
 
   def single
-    reporter.get(from)
+    reporter.fetch(from)
   end
 
   def range
     from.till(to, period).inject({}) do |acc, key|
-      acc[key] = reporter.get key
+      acc[key] = reporter.fetch key
       acc
     end
   end
