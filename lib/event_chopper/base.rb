@@ -12,6 +12,10 @@ class Base
     @store = store name
   end
 
+  def time_quant
+    :ten_minutes
+  end
+
   def emit record, stamp = nil, id = NOID
     stamp = TimeKey.now if stamp.nil?
     current_value = get stamp, id
@@ -32,8 +36,9 @@ class Base
   end
 
   def get stamp, id = NOID
+    puts stamp
     tor = @store.get stamp, id
-    if tor.nil?
+    if tor.nil? and time_quant != stamp.type
       chunks = stamp.children.inject([]) do |acc, item|
         t = get item, id
         acc << t unless t.nil?
@@ -48,7 +53,8 @@ class Base
   end
 
   def fetch stamp, id = NOID
-    finalize get(stamp, id)
+    to_fin = get(stamp, id)
+    finalize to_fin unless to_fin.nil?
   end
 
   def run

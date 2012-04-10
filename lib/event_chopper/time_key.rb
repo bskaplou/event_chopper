@@ -3,108 +3,124 @@ require 'date'
 module EventChopper
 
 class TimeKey
-  def self.now
-    self.from_date DateTime.now
-  end
+  PARENTS = {
+    :month => :year,
+    :day => :month,
+    :hour => :day,
+    :ten_minutes => :hour,
+    :minute => :ten_minutes,
+    :half_minute => :minute 
+  }
 
-  def self.from_date date, size = :minute
-    min_tail = (date.min - date.min % 10).to_s.rjust(2, '0')
-    r = self.new date.strftime('%Y-%m-%d %H:') + min_tail
-    size == :minute ? r : r.parents[STEPS_DEPTH.index(size)]
-  end
+  SIZES = {
+    :year => 4,
+    :month => 7,
+    :day => 10,
+    :hour => 13,
+    :ten_minutes => 15,
+    :minute => 16,
+    :half_minute => 20
+  }
 
-  def self.from_string str, size = :minute
-    #some validation here
-    r = self.new str
-    size == :minute ? r : r.parents[STEPS_DEPTH.index(size)]
+  def initialize data, type = :ten_minutes
+    @data = data.collect {|x| x.nil? ? 0 : x}
+    @type = type
   end
-
-  attr_reader :val
 
   def hash
-    val.hash
+    @data.hash
   end
+
+  attr_accessor :data, :type
 
   def eql?(other)
-    val == other.val
+    data == other.data
   end
 
-  def year
-    val[0, 4].to_i
+  def self.from_date dt, type = :ten_minutes
+    TimeKey.new [dt.year, dt.month, dt.mday, dt.hour, dt.min / 10, dt.min % 10, dt.sec < 30 ? 0 : 30], type
   end
 
-  def month
-    val.size > 5 ? val[5, 2].to_i : 0
+  def self.now type = :ten_minutes
+    TimeKey.from_date DateTime.now, type
   end
 
-  def day
-    val.size > 8 ? val[8, 2].to_i : 0
+  def self.from_string str, type = :ten_minutes
+    (year, month, day, hour, minutes, seconds) = str.split /-| |:/
+    if minutes.nil?
+      t_m = 0
+      m = 0
+    else
+      if minutes.size == 1
+        t_m = minutes.to_i
+        m = 0
+      else
+        t_m = minutes.to_i / 10
+        m = minutes.to_i % 10
+      end
+    end
+    seconds = 0 if seconds.nil?
+    TimeKey.new [year.to_i, month.to_i, day.to_i, hour.to_i, t_m, m, seconds.to_i < 30 ? 0 : 30], type
   end
 
-  def hour
-    val.size > 11 ? val[11, 2].to_i : 0
-  end
-
-  def minute
-    val.size > 14 ? val[14, 2].to_i : 0
-  end
-
-  def to_datetime
-    DateTime.new(year, month, day, hour, minute)
-  end
-
-
-  def initialize stamp
-    @val = stamp
+  def two i
+    i.to_s.rjust(2, '0')
   end
 
   def to_s
-    val
+    "#{@data[0]}-#{two(@data[1])}-#{two(@data[2])} #{two(@data[3])}:#{@data[4]}#{@data[5]}:#{two(@data[6])}"[0, SIZES[@type]]
   end
 
   def days_in_month year, month
     (Date.new(year, 12, 31) << (12 - month)).day
   end
 
-  MIN = (0..6).map {|item| (item * 10).to_s.rjust(2, '0')}
-  HOUR = (0..24).map {|item| item.to_s.rjust(2, '0')}
-
-  def children
-    if val.size == 13
-      MIN.map {|item| self.class.new(val + ':' + item)}
-    elsif  val.size == 10
-      HOUR.map {|item| self.class.new(val + ' ' + item)}.flatten
-    elsif val.size == 7
-      (1..(days_in_month year, month)).map do |item|
-        self.class.new(val + '-' + item.to_s.rjust(2, '0'))
-      end
-    else
+  def parents
+    if @type == :year
       []
+    else
+      step = TimeKey.new(@data, PARENTS[@type])
+      [step, step.parents].flatten
     end
   end
 
-  def parents #order is important
-    tor = []
-    tor << self.class.new(val[0,13]) if val.size > 13
-    tor << self.class.new(val[0,10]) if val.size > 10
-    tor << self.class.new(val[0,7]) if val.size > 7
-    tor << self.class.new(val[0,4]) if val.size > 4
-    tor
+  def children
+    case @type
+      when :half_minute
+        []
+      when :minute
+        [0, 30].collect {|m| TimeKey.new(@data[0,6] + [m], :half_minute) }
+      when :ten_minutes
+        (0..9).collect {|m| TimeKey.new(@data[0,5] + [m, 0], :minute) }
+      when :hour
+        (0..5).collect {|m| TimeKey.new(@data[0,4] + [m, 0, 0], :ten_minutes) }
+      when :day
+        (0..23).collect {|m| TimeKey.new(@data[0,3] + [m, 0, 0, 0], :hour) }
+      when :month
+        (1..(days_in_month @data[1], @data[2])).collect {|m| TimeKey.new(@data[0,2] + [m, 0, 0, 0, 0], :day)}
+      when :year
+        (1..12).collect {|m| TimeKey.new(@data[0,1] + [m, 0, 0, 0, 0, 0], :month)}
+    end
+  end
+
+  def to_datetime
+    DateTime.new @data[0], @data[1], @data[2] , @data[3] , @data[4] * 10 + @data[5], @data[6]
   end
 
   STEPS = {
-    :minute => 1.0/24/6,
+    :half_minute => 1.0/24/6/10/2,
+    :minute => 1.0/24/6/10,
+    :ten_minutes => 1.0/24/6,
     :hour => 1.0/24,
     :day => 1.0,
     :month => 25,
     :year => 365
   }
-  STEPS_DEPTH = [:hour, :day, :month, :year]
+  STEPS_DEPTH = [:minute, :ten_minutes, :hour, :day, :month, :year]
 
   def till stamp, step = :hour
     to_datetime.step(stamp.to_datetime, STEPS[step]).map do |d|
-      r = TimeKey.from_date(d)
-      step == :minute ? r : r.parents[STEPS_DEPTH.index(step)]
+      TimeKey.from_date(d, step)
     end.uniq
   end
 end

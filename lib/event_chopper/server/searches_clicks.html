@@ -33,41 +33,24 @@ var xticks = [];
 var all_gates = {};
 var dd;
 function draw_graph(from, to, period) {
-$.getJSON('/json?from=' + from + '&to=' + to + '&period=' + period + '&reporter=Scb', function(data) {
+$.getJSON('/json?from=' + from + '&to=' + to + '&period=' + period + '&reporter=SearchesClicks', function(data) {
   var stamps = [];
   var searches = [];
   var clicks = [];
-  var bookings = [];
-  var pbookings = [];
   for(var stamp in data) {
     stamps.push(stamp);
     clicks.push(data[stamp] && data[stamp]['click'] ? data[stamp]['click'] : null);
     searches.push(data[stamp] && data[stamp]['search'] ? data[stamp]['search'] : null);
-    bookings.push(data[stamp] && data[stamp]['booking'] ? data[stamp]['booking'] : null);
-    pbookings.push(data[stamp] && data[stamp]['paid_booking'] ? data[stamp]['paid_booking'] : null);
   }
   chart1 = new Highcharts.Chart({
          chart: {
             renderTo: 'container',
-            type: 'spline',
+            type: 'line',
             spacingRight: 20,
             zoomType : 'x'
          },
          title: {
-            text: 'clicks & searches & bookings'
-         },
-         tooltip : {
-           crosshairs: true,
-           shared: true
-         },
-         plotOptions : {
-           			spline: {
-				marker: {
-					radius: 4,
-					lineColor: '#666666',
-					lineWidth: 1
-				}
-			}
+            text: 'clicks & searches'
          },
          yAxis: {
             title: {
@@ -83,9 +66,7 @@ $.getJSON('/json?from=' + from + '&to=' + to + '&period=' + period + '&reporter=
          },
          series: [
            {name : 'clicks' , data : clicks},
-           {name : 'searches', data : searches},
-           {name : 'bookings', data : bookings},
-           {name : 'paid_bookings', data : pbookings}
+           {name : 'searches', data : searches}
          ]
   });
 });

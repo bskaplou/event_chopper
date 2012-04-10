@@ -5,19 +5,31 @@ class Scb < Base
     ['search', 'click', 'booking']
   end
 
+  def time_quant
+    :minute
+  end
+
   def map topic, record, stamp
+    begin
+ 
     if topic == 'booking'
       dt = DateTime.strptime record['booked_at'], '%Y-%m-%dT%H:%M:%SZ'
       stamp = DateTime.strptime(record['occured_at'], '%Y-%m-%dT%H:%M:%S+04:00').to_time.to_i
       tk = TimeKey.from_date dt
       emit({topic => {record['order_number'] => {'state' => record['state'], 'stamp' => stamp}}}, tk)
     else
-      emit({topic => 1})
+      dt = DateTime.strptime record['created_at'], '%Y-%m-%dT%H:%M:%SZ'
+      tk = TimeKey.from_date dt
+      emit({topic => 1}, tk)
+    end
+
+    rescue
+      nil
     end
   end
 
   def reduce data
-    t = data.inject({}) do |acc, entry|
+    data.inject({}) do |acc, entry|
       acc.merge(entry) do |k, v1, v2|
         if k.start_with? 'booking'
           v1.merge(v2) do |k, b1, b2|
@@ -28,8 +40,6 @@ class Scb < Base
         end
       end
     end
-    puts "REDUCE" + t.to_s
-    t
   end
 
   def finalize record

@@ -3,8 +3,10 @@
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require 'event_chopper'
 
-if ARGV.length > 2
-  puts Object.const_get('EventChopper').const_get(ARGV[0]).new.fetch EventChopper::TimeKey.new(ARGV[1]), ARGV[2]
+tk = EventChopper::TimeKey.from_string ARGV[1], ARGV[2].to_sym
+
+if ARGV.length > 3
+  puts Object.const_get('EventChopper').const_get(ARGV[0]).new.fetch tk, ARGV[3]
 else
-  puts Object.const_get('EventChopper').const_get(ARGV[0]).new.fetch EventChopper::TimeKey.new(ARGV[1])
+  puts Object.const_get('EventChopper').const_get(ARGV[0]).new.fetch tk
 end
