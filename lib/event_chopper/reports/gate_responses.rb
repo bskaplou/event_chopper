@@ -5,6 +5,10 @@ class GateResponses < Base
     ['search_result']
   end
 
+  def time_quant
+    :half_minute
+  end
+
   def map topic, record, stamp
     stamp = DateTime.strptime(record['occured_at'], '%Y-%m-%dT%H:%M:%S%:z')
     tk = TimeKey.from_date stamp, :half_minute
