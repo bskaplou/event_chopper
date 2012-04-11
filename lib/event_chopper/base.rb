@@ -36,7 +36,6 @@ class Base
   end
 
   def get stamp, id = NOID
-    puts stamp
     tor = @store.get stamp, id
     if tor.nil? and time_quant != stamp.type
       chunks = stamp.children.inject([]) do |acc, item|

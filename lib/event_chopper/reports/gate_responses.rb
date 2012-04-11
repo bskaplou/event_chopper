@@ -12,10 +12,18 @@ class GateResponses < Base
   def map topic, record, stamp
     stamp = DateTime.strptime(record['occured_at'], '%Y-%m-%dT%H:%M:%S%:z')
     tk = TimeKey.from_date stamp, :half_minute
+    max_duration = 0
     to_emit = {}
     record['metadata']['gates_meta'].each do |h|
+      max_duration = h['duration'] if h['duration'] > max_duration
       to_emit[h['label']] = {'requests' => 1 , 'duration' => h['duration'], 'tickets' => h['count'].nil? ? 0 : h['count'], 'errors' => h['count'].nil? ? 1 : 0}
     end
+    to_emit['total'] = {
+      'requests' => 1, 
+      'errors' => record['metadata']['count'].nil? ? 1 : 0, 
+      'tickets' => record['metadata']['count'].nil? ? 0 : record['metadata']['count'],
+      'duration' => max_duration
+    }
     emit to_emit, tk
   end
 
