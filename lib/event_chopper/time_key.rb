@@ -38,6 +38,7 @@ class TimeKey
   end
 
   def self.from_date dt, type = :ten_minutes
+    dt = dt.new_offset '+00:00'
     TimeKey.new [dt.year, dt.month, dt.mday, dt.hour, dt.min / 10, dt.min % 10, dt.sec < 30 ? 0 : 30], type
   end
 
