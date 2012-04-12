@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+require 'daemons'
+
+worker_name = ARGV[2]
+
+options = {
+  :app_name  => worker_name,
+  :dir_mode  => :script,
+  :dir       => '../pids',
+  :log_output => true,
+  :multiple  => false,
+  :backtrace => true,
+  :monitor => true,
+  :backtrace => true
+}
+
+ENV['WAFFLE_CONFIG'] = File.join(Dir.pwd, 'config', 'waffle.yml')
+
+Daemons.run(File.join(File.dirname(__FILE__), "run"), options)
