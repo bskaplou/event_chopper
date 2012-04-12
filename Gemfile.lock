@@ -31,7 +31,10 @@ GEM
     bunny (0.7.9)
     configuratron (0.0.1)
     daemons (1.1.8)
+    erb-yaml (1.0.1)
+      hash-keys (>= 1.0.0, < 2.0.0)
     eventmachine (0.12.10)
+    hash-keys (1.0.1)
     i18n (0.6.0)
     mongo (1.5.2)
       bson (= 1.5.2)
@@ -62,6 +65,7 @@ PLATFORMS
 DEPENDENCIES
   bson_ext
   daemons
+  erb-yaml
   event_chopper!
   mongo
   riak-client
