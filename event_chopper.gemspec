@@ -24,9 +24,10 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "waffle"
   s.add_runtime_dependency "yajl-ruby"
   s.add_runtime_dependency "mongo"
-  s.add_runtime_dependency "sinatra"
   s.add_runtime_dependency "riak-client"
   s.add_runtime_dependency "configuratron"
   s.add_runtime_dependency "daemons"
+  s.add_runtime_dependency "thin"
+  s.add_runtime_dependency "sinatra"
   # s.add_runtime_dependency "rest-client"
 end

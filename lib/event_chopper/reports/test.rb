@@ -6,7 +6,11 @@ class Test < Base
   end
 
   def map topic, record, stamp
-    emit({topic => 1}) if record['marker'].end_with? '.may_holidays'
+    begin
+      emit({topic => 1}) if record['marker'].end_with? '.may_holidays'
+    rescue
+      nil
+    end
   end
 
   def reduce data

@@ -7,6 +7,7 @@ gem 'riak-client'
 gem 'mongo'
 gem 'bson_ext'
 gem 'daemons'
+gem 'thin'
 
 # Specify your gem's dependencies in event_chopper.gemspec
 gemspec
