@@ -38,6 +38,11 @@ class Server < Sinatra::Base
     reporter.fetch(from)
   end
 
+  def csv
+    r = reporter
+    r.csv(r.fetch(from))
+  end
+
   def range
     from.till(to, period).inject({}) do |acc, key|
       acc[key] = reporter.fetch key
@@ -49,6 +54,13 @@ class Server < Sinatra::Base
     content_type 'application/json'
     encode(params.has_key?('to') ? range : single)
   end
+
+  get '/csv' do
+    content_type 'text/csv'
+    attachment "#{reporter_name}_#{from.to_s}.csv"
+    csv
+  end
+
 
 end
 

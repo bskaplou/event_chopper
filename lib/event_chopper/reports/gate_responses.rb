@@ -6,7 +6,7 @@ class GateResponses < Base
   end
 
   def time_quant
-    :half_minute
+    :ten_minutes
   end
 
   def map topic, record, stamp

@@ -7,6 +7,7 @@ require "event_chopper/store/ttstore"
 require "event_chopper/store/riak_store"
 require "event_chopper/store/eleminating_store"
 require "event_chopper/store/reduction_store"
+require File.join(File.dirname(__FILE__), '..', 'config/config.rb')
 
 module EventChopper
   def encode data
@@ -17,15 +18,6 @@ module EventChopper
     Yajl::Parser.parse data
   end
 
-  def store name
-    @@store_block.call name
-  end
-
-  def storage &block
-    @@store_block = block
-  end
-
-  module_function :encode, :decode, :store, :storage
+  module_function :encode, :decode, :store, :key_value_store
 end
 
-require File.join(File.dirname(__FILE__), '..', 'config/config.rb')

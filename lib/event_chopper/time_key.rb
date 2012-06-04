@@ -43,7 +43,7 @@ class TimeKey
   end
 
   def self.now type = :ten_minutes
-    TimeKey.from_date DateTime.now, type
+    TimeKey.from_date DateTime.now.new_offset('+00:00'), type
   end
 
   def self.from_string str, type = :ten_minutes

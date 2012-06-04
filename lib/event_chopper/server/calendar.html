@@ -37,18 +37,17 @@ var xticks = [];
 var all_gates = {};
 var dd;
 function draw_graph(from, to, period) {
-$.getJSON('/json?from=' + from + '&to=' + to + '&period=' + period + '&reporter=Scb', function(data) {
+$.getJSON('/json?from=' + from + '&to=' + to + '&period=' + period + '&reporter=Calendar', function(data) {
   var stamps = [];
   var searches = [];
   var strs = [];
   var clicks = [];
   var aclicks = [];
-  var lclicks = [];
   var gclicks = [];
   var ctrs = [];
   var bookings = [];
   var pbookings = [];
-  var cols = ['time' ,'searches', 'clicks','airline_clicks', 'logo_clicks', 'gate_clicks', 'bookings', 'pbc', 'ctr', 'str'];
+  var cols = ['time' ,'searches', 'clicks', 'bookings', 'pbc', 'ctr', 'str'];
   var dts = [];
 
   function s(a) {
@@ -61,32 +60,22 @@ $.getJSON('/json?from=' + from + '&to=' + to + '&period=' + period + '&reporter=
 
   for(var stamp in data) {
     stamps.push(stamp);
-    var gcl = data[stamp] && data[stamp]['gate_click'] ? data[stamp]['gate_click'] : null;
+    var cl = data[stamp] && data[stamp]['gate_click'] ? data[stamp]['gate_click'] : null;
     var acl = data[stamp] && data[stamp]['airline_click'] ? data[stamp]['airline_click'] : null;
     var lcl = data[stamp] && data[stamp]['airline_logo_click'] ? data[stamp]['airline_logo_click'] : null;
-    var cl = data[stamp] && data[stamp]['click'] ? data[stamp]['click'] : null;
-    if(cl == null){
-      if(acl != null || gcl != null || lcl != null) {
-        cl = i(acl) + i(gcl) + i(lcl);
-      }
-    } else if (cl != null) {
-      cl += i(acl) + i(gcl) + i(lcl);
-    }
     var sr = data[stamp] && data[stamp]['search'] ? data[stamp]['search'] : null;
     var bo = data[stamp] && data[stamp]['booking'] ? data[stamp]['booking'] : null;
     var pb = data[stamp] && data[stamp]['paid_booking'] ? data[stamp]['paid_booking'] : null;
-    var ctr = (sr == null || cl == null) ? null : Math.round(cl / (sr / 100) * 100) / 100;
-    var str = (bo == null || cl == null) ? null : Math.round(bo / (cl / 100) * 100) / 100; 
-    clicks.push(cl);
-    aclicks.push(acl);
-    lclicks.push(lcl);
-    gclicks.push(gcl);
+    var all_clicks = cl + i(acl) + i(lcl);
+    var ctr = (sr == null || cl == null) ? null : Math.round(all_clicks / (sr / 100) * 100) / 100;
+    var str = (bo == null || cl == null) ? null : Math.round(bo / (all_clicks / 100) * 100) / 100; 
+    clicks.push(all_clicks != 0 ? all_clicks : null);
     searches.push(sr);
     bookings.push(bo);
     pbookings.push(pb);
     strs.push(str);
     ctrs.push(ctr);
-    dts.unshift({time: stamp, searches: s(sr), clicks : s(cl), gate_clicks: s(gcl), airline_clicks: s(acl), logo_clicks: s(lcl), bookings: s(bo), pbc: s(pb), str : s(str), ctr: s(ctr)});
+    dts.unshift({time: stamp, searches: s(sr), clicks : all_clicks, bookings: s(bo), pbc: s(pb), str : s(str), ctr: s(ctr)});
   }
   chart1 = new Highcharts.Chart({
          chart: {
@@ -96,7 +85,7 @@ $.getJSON('/json?from=' + from + '&to=' + to + '&period=' + period + '&reporter=
             zoomType : 'x'
          },
          title: {
-            text: 'clicks & searches & bookings'
+            text: 'Social Sharing clicks & searches & bookings'
          },
          tooltip : {
            crosshairs: true,
@@ -125,9 +114,6 @@ $.getJSON('/json?from=' + from + '&to=' + to + '&period=' + period + '&reporter=
          },
          series: [
            {name : 'clicks' , data : clicks},
-           {name : 'airline clicks' , data : aclicks},
-           {name : 'logo clicks' , data : lclicks},
-           {name : 'gate clicks' , data : gclicks},
            {name : 'searches', data : searches},
            {name : 'bookings', data : bookings},
            {name : 'paid_bookings', data : pbookings},

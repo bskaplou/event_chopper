@@ -1,13 +1,14 @@
 module EventChopper
 
-class Test < Base
+class NotFound < Base
   def event_types
-    ['search', 'gate_click']
+    ['search_result']
   end
 
   def map topic, record, stamp
     begin
-      emit({topic => 1}) if record['marker'].end_with? '.may_holidays'
+      dir = record['params_attributes']['origin_iata'] + '-' + record['params_attributes']['destination_iata']
+      emit ({dir => 1}) if record['tickets'].size == 0
     rescue
       nil
     end

@@ -8,5 +8,7 @@ tk = EventChopper::TimeKey.from_string ARGV[1], ARGV[2].to_sym
 if ARGV.length > 3
   puts Object.const_get('EventChopper').const_get(ARGV[0]).new.fetch tk, ARGV[3]
 else
-  puts Object.const_get('EventChopper').const_get(ARGV[0]).new.fetch tk
+  #puts Object.const_get('EventChopper').const_get(ARGV[0]).new.fetch tk
+  r = Object.const_get('EventChopper').const_get(ARGV[0]).new
+  puts r.csv(r.fetch(tk))
 end

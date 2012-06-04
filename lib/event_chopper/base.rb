@@ -17,13 +17,14 @@ class Base
   end
 
   def emit record, stamp = nil, id = NOID
-    stamp = TimeKey.now if stamp.nil?
+    stamp = TimeKey.now time_quant if stamp.nil?
     current_value = get stamp, id
     if current_value.nil?
       current_value = record
     else
       current_value = reduce [current_value, record]
     end
+    #puts "#{stamp.to_s} #{current_value.to_s}"
     @store.put stamp, current_value, id
   end
 
@@ -52,7 +53,7 @@ class Base
   end
 
   def fetch stamp, id = NOID
-    to_fin = get(stamp, id)
+    to_fin = get stamp, id
     finalize to_fin unless to_fin.nil?
   end
 

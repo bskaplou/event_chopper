@@ -1,24 +1,26 @@
 module EventChopper
 
-class Test < Base
+class ClickPosition < Base
   def event_types
-    ['search', 'gate_click']
+    ['ui_event:purchased_proposal']
   end
 
   def map topic, record, stamp
     begin
-      emit({topic => 1}) if record['marker'].end_with? '.may_holidays'
+      emit({record['data']['index'].to_s => 1})
     rescue
       nil
     end
   end
 
   def reduce data
-    data.inject({}) do |acc, entry|
+    tor = data.inject({}) do |acc, entry|
       acc.merge(entry) do |k, v1, v2|
         v1 + v2
       end
     end
+    puts tor
+    tor
   end
 end
 
