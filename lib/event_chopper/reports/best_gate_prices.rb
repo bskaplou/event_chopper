@@ -5,10 +5,6 @@ class BestGatePrices < Base
     ['search_result']
   end
 
-  def rates
-    {"uah" => 3.66, "usd" => 29.38, "eur" => 38.77, "rub" => 1}
-  end
-
   def normalize gates, rates, prices
     prices.keys.collect do |gate_id|
       gate = gates[gates.index {|g| g['id'].to_s == gate_id.to_s}]
@@ -19,7 +15,7 @@ class BestGatePrices < Base
   def map topic, record, stamp
     begin
       ticket = record['tickets'].sort {|a, b| a['total'] <=> b['total']}[0]
-      best_proposal = normalize(record['gates_info'], rates, ticket['native_prices']).sort {|a,b| a['price'] <=> b['price']}[0]
+      best_proposal = normalize(record['gates_info'], record['currency_rates'].merge({'rub' => 1}), ticket['native_prices']).sort {|a,b| a['price'] <=> b['price']}[0]
       emit ({'gates' => {best_proposal['name'] => best_proposal['id']}, 
         record['params_attributes']['origin_iata'] + '-' + record['params_attributes']['destination_iata'] => {best_proposal['id'] => 1}})
     rescue
