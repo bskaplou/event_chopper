@@ -1,6 +1,5 @@
 *.gem
 .bundle
-config/*
 pkg/*
 logs/*
 pids/*
